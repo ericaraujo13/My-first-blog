@@ -1,19 +1,63 @@
-<p id="notice"><%= notice %></p>
+<div class="shadow p-5 bg-body rounded">
+  <div class="text-center mb-5">
+    <h1><%= @post.title %></h1>
 
-<p>
-  <strong>Title:</strong>
-  <%= @post.title %>
-</p>
+    <p class='text-muted'>
+      <strong> Por <%= @post.author %></strong><br>
+      <%= l @post.created_at, format: :long %>
+    </p>
+  </div>
 
-<p>
-  <strong>Author:</strong>
-  <%= @post.author %>
-</p>
+  <div class='px-5'>
+    <%= @post.body.gsub("\n","<br>").html_safe %>
+  </div>
+</div>
 
-<p>
-  <strong>Body:</strong>
-  <%= @post.body %>
-</p>
+<div class="m-5">
+  <div class="text-center">
+    <h4>
+      <%= pluralize(@post.comments.count, 'Comentário') %>
 
-<%= link_to 'Edit', edit_post_path(@post) %> |
-<%= link_to 'Back', posts_path %>
+      <% if @post.comments.none? %>
+        <span class="badge bg-success">Seja o primeiro a comentar!</span>
+      <% end %>
+    </h4>
+  </div>
+
+  <div class="shadow p-4 m-3 bg-body rounded">
+    <%= form_with model: @comment, local: true do |form| %>
+      <%= form.hidden_field :post_id, value: @post.id %>
+      <div class="form-group">
+        <%= form.label :author %>
+        <%= form.text_field :author, class: 'form-control', required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :body %>
+        <%= form.text_area :body, class: 'form-control', required: true %>
+      </div>
+
+      <%= form.submit 'Enviar', class: 'btn btn-primary mt-3', 
+      data: { disable_with: 'Enviando...' } %>
+    <% end %>
+  </div>
+
+  <% @comments.each do |comment| %>
+    <div class="shadow p-4 m-3 bg-body rounded">
+      <div class="row">
+        <div class="col">
+          <strong><%= comment.author %></strong>
+        </div>
+
+        <div class="col text-end">
+          <em data-bs-toggle="tooltip" data-bs-placement="top" title="<%= l comment.created_at, format: :long %>">
+            <%= time_ago_in_words comment.created_at %> atras
+          </em>
+        </div>
+      </div>
+      <hr>
+      <%= sanitize(comment.body.gsub("\n", "<br>")).html_safe %>
+    </div>
+  <% end %>
+</div<
+
