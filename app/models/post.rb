@@ -5,7 +5,7 @@ class Post < ApplicationRecord
 
   validates :title, :body, :author, presence: true 
   
-  has_many :comments
+  has_many :comments, dependent: :destroy
 
   friendly_id :title, use: :slugged
   
